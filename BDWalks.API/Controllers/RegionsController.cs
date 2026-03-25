@@ -63,6 +63,11 @@ namespace BDWalks.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateRegionDto createRegionDto)
         {
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
+
             // converting the region DTO to region domain model
             var regionDomain = mapper.Map<Region>(createRegionDto);
 
@@ -82,6 +87,11 @@ namespace BDWalks.API.Controllers
         [Route("{Id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateRegionDto updateRegionDto)
         {
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
+
             // converting the region DTO to region domain model
             var region = mapper.Map<Region>(updateRegionDto);
 

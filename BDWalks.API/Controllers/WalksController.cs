@@ -24,6 +24,11 @@ namespace BDWalks.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateWalkDto createWalkDto)
         {
+            if(ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
+
             // converting the walk DTO to walk domain model
             var walkDomain = mapper.Map<Walk>(createWalkDto);
 
@@ -77,6 +82,11 @@ namespace BDWalks.API.Controllers
         [Route("{Id:Guid}")]
         public async Task<IActionResult> Update([FromRoute]Guid Id, [FromBody]UpdateWalkDto updateWalkDto)
         {
+            if(ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
+
             // converting the walk DTO to walk domain model
             var walkDomain = mapper.Map<Walk>(updateWalkDto);
 

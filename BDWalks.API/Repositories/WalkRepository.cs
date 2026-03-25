@@ -13,6 +13,7 @@ namespace BDWalks.API.Repositories
         {
             this.dbContext = dbContext;
         }
+
         public async Task<Walk> CreateAsync(Walk walk)
         {
             await dbContext.Walks.AddAsync(walk);
@@ -64,11 +65,11 @@ namespace BDWalks.API.Repositories
                 return null;
             }
 
-            existingWalk.Name = string.IsNullOrEmpty(walk.Name) ? existingWalk.Name : walk.Name;
-            existingWalk.LengthInKm = walk.LengthInKm == 0 ? existingWalk.LengthInKm : walk.LengthInKm;
-            existingWalk.Description = string.IsNullOrEmpty(walk.Description) ? existingWalk.Description : walk.Description;
+            existingWalk.Name = walk.Name.Length < 3 ? existingWalk.Name : walk.Name;
+            existingWalk.LengthInKm = walk.LengthInKm <= 0 ? existingWalk.LengthInKm : walk.LengthInKm;
+            existingWalk.Description = walk.Description.Length < 5 ? existingWalk.Description : walk.Description;
             existingWalk.WalkImageUrl = string.IsNullOrEmpty(walk.WalkImageUrl) ? existingWalk.WalkImageUrl : walk.WalkImageUrl;
-            existingWalk.RegionId = walk.RegionId == Guid.Empty ? existingWalk.RegionId : walk.RegionId;
+            existingWalk.RegionId = walk.RegionId == Guid.Empty  ? existingWalk.RegionId : walk.RegionId;
             existingWalk.DifficultyId = walk.DifficultyId == Guid.Empty ? existingWalk.DifficultyId : walk.DifficultyId;
 
             await dbContext.SaveChangesAsync();

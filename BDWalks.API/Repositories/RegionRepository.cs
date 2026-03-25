@@ -61,8 +61,8 @@ namespace BDWalks.API.Repositories
                 return null;
             }
 
-            regionToUpdate.Code = string.IsNullOrEmpty(region.Code) ? regionToUpdate.Code : region.Code;
-            regionToUpdate.Name = string.IsNullOrEmpty(region.Name) ? regionToUpdate.Name : region.Name;
+            regionToUpdate.Code = region.Code.Length < 3 ? regionToUpdate.Code : region.Code;
+            regionToUpdate.Name = region.Name.Length < 3 ? regionToUpdate.Name : region.Name;
             regionToUpdate.RegionImageUrll = string.IsNullOrEmpty(region.RegionImageUrll) ? regionToUpdate.RegionImageUrll : region.RegionImageUrll;
 
             await dbContext.SaveChangesAsync();
