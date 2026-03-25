@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BDWalks.API.CustomActionFilters;
 using BDWalks.API.Models.Domain;
 using BDWalks.API.Models.DTOs;
 using BDWalks.API.Repositories.Interfaces;
@@ -22,12 +23,13 @@ namespace BDWalks.API.Controllers
 
         // POST: api/walks
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] CreateWalkDto createWalkDto)
         {
-            if(ModelState.IsValid == false)
-            {
-                return BadRequest(ModelState);
-            }
+            //if(ModelState.IsValid == false)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             // converting the walk DTO to walk domain model
             var walkDomain = mapper.Map<Walk>(createWalkDto);
@@ -80,12 +82,13 @@ namespace BDWalks.API.Controllers
         // PUT: api/walks/{id}
         [HttpPut]
         [Route("{Id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute]Guid Id, [FromBody]UpdateWalkDto updateWalkDto)
         {
-            if(ModelState.IsValid == false)
-            {
-                return BadRequest(ModelState);
-            }
+            //if(ModelState.IsValid == false)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             // converting the walk DTO to walk domain model
             var walkDomain = mapper.Map<Walk>(updateWalkDto);

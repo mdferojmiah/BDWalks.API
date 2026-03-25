@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BDWalks.API.CustomActionFilters;
 using BDWalks.API.Data;
 using BDWalks.API.Models.Domain;
 using BDWalks.API.Models.DTOs;
@@ -61,12 +62,13 @@ namespace BDWalks.API.Controllers
 
         // POST: api/regions
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] CreateRegionDto createRegionDto)
         {
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (ModelState.IsValid == false)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             // converting the region DTO to region domain model
             var regionDomain = mapper.Map<Region>(createRegionDto);
@@ -85,12 +87,13 @@ namespace BDWalks.API.Controllers
         // PUT: api/regions/{id}
         [HttpPut]
         [Route("{Id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateRegionDto updateRegionDto)
         {
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (ModelState.IsValid == false)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             // converting the region DTO to region domain model
             var region = mapper.Map<Region>(updateRegionDto);
