@@ -44,12 +44,12 @@ namespace BDWalks.API.Controllers
             return Ok(walkDTO);
         }
 
-        // GET: api/walks?queryOn=Name&queryBy=something
+        // GET: api/walks?queryOn=Name&queryBy=something&orderBy=Name&isAscending=true
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery]string? queryOn = null, [FromQuery]string? queryBy = null)
+        public async Task<IActionResult> GetAll([FromQuery]string? queryOn = null, [FromQuery]string? queryBy = null, [FromQuery]string? ordreBy = null, bool isAscending = true)
         {
             // getting the walk domain models from database
-            var walksDomain = await walkRepository.GetAllAsync(queryOn, queryBy);
+            var walksDomain = await walkRepository.GetAllAsync(queryOn, queryBy, ordreBy, isAscending);
 
             // converting the walk domain models to walk DTOs
             var walksDTO = mapper.Map<List<WalkDto>>(walksDomain);

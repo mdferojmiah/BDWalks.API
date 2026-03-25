@@ -36,7 +36,7 @@ namespace BDWalks.API.Repositories
             return existingWalk;
         }
 
-        public async Task<List<Walk>> GetAllAsync(string? queryOn = null, string? queryBy = null)
+        public async Task<List<Walk>> GetAllAsync(string? queryOn = null, string? queryBy = null, string? orderBy = null, bool isAscending = true)
         {
             // getting queryable Walks inculding the related Difficulty and Region data
             var result = dbContext.Walks.Include(x => x.Difficulty).Include(x => x.Region).AsQueryable();
@@ -47,6 +47,15 @@ namespace BDWalks.API.Repositories
                 if(queryOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 {
                     result = result.Where(x => x.Name.Contains(queryBy));
+                }
+            }
+
+            // sorting
+            if(string.IsNullOrWhiteSpace(orderBy) == false)
+            {
+                if(orderBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    result = isAscending ? result.OrderBy(x => x.Name) : result.OrderByDescending(x => x.Name);
                 }
             }
 
