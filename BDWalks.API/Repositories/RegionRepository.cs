@@ -63,7 +63,7 @@ namespace BDWalks.API.Repositories
 
             regionToUpdate.Code = region.Code.Length < 3 ? regionToUpdate.Code : region.Code;
             regionToUpdate.Name = region.Name.Length < 3 ? regionToUpdate.Name : region.Name;
-            regionToUpdate.RegionImageUrll = string.IsNullOrEmpty(region.RegionImageUrll) ? regionToUpdate.RegionImageUrll : region.RegionImageUrll;
+            regionToUpdate.RegionImageUrl = string.IsNullOrEmpty(region.RegionImageUrl) ? regionToUpdate.RegionImageUrl : region.RegionImageUrl;
 
             await dbContext.SaveChangesAsync();
             return regionToUpdate;

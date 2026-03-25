@@ -36,10 +36,22 @@ namespace BDWalks.API.Repositories
             return existingWalk;
         }
 
-        public async Task<List<Walk>> GetAllAsync()
+        public async Task<List<Walk>> GetAllAsync(string? queryOn = null, string? queryBy = null)
         {
-            var result = await dbContext.Walks.Include(x => x.Difficulty).Include(x => x.Region).ToListAsync();
-            return result;
+            // getting queryable Walks inculding the related Difficulty and Region data
+            var result = dbContext.Walks.Include(x => x.Difficulty).Include(x => x.Region).AsQueryable();
+
+            // filtering
+            if (string.IsNullOrWhiteSpace(queryOn) == false && string.IsNullOrWhiteSpace(queryBy) == false)
+            {
+                if(queryOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    result = result.Where(x => x.Name.Contains(queryBy));
+                }
+            }
+
+            // executing and returning the list of walks
+            return await result.ToListAsync();
         }
 
         public async Task<Walk?> GetByIdAsync(Guid Id)

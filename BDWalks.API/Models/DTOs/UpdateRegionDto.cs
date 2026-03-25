@@ -8,6 +8,6 @@ namespace BDWalks.API.Models.DTOs
         public string Code { get; set; }
         [StringLength(100, ErrorMessage = "Region {0} must be less than {1} characters")]
         public string Name { get; set; }
-        public string? RegionImageUrll { get; set; }
+        public string? RegionImageUrl { get; set; }
     }
 }
