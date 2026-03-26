@@ -57,6 +57,10 @@ namespace BDWalks.API.Repositories
                 {
                     result = isAscending ? result.OrderBy(x => x.Name) : result.OrderByDescending(x => x.Name);
                 }
+                if (orderBy.Equals("Length", StringComparison.OrdinalIgnoreCase))
+                {
+                    result = isAscending ? result.OrderBy(x => x.LengthInKm) : result.OrderByDescending(x => x.LengthInKm);
+                }
             }
 
             // executing and returning the list of walks
