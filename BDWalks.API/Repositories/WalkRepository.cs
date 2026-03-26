@@ -36,7 +36,8 @@ namespace BDWalks.API.Repositories
             return existingWalk;
         }
 
-        public async Task<List<Walk>> GetAllAsync(string? queryOn = null, string? queryBy = null, string? orderBy = null, bool isAscending = true)
+        public async Task<List<Walk>> GetAllAsync(string? queryOn = null, string? queryBy = null, string? orderBy = null, 
+            bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
         {
             // getting queryable Walks inculding the related Difficulty and Region data
             var result = dbContext.Walks.Include(x => x.Difficulty).Include(x => x.Region).AsQueryable();
@@ -63,8 +64,11 @@ namespace BDWalks.API.Repositories
                 }
             }
 
+            // pagination
+            var skip = (pageNumber - 1) * pageSize;
+
             // executing and returning the list of walks
-            return await result.ToListAsync();
+            return await result.Skip(skip).Take(pageSize).ToListAsync();
         }
 
         public async Task<Walk?> GetByIdAsync(Guid Id)
