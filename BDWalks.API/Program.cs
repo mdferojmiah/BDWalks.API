@@ -3,8 +3,11 @@ using BDWalks.API.Data;
 using BDWalks.API.Mappings;
 using BDWalks.API.Repositories;
 using BDWalks.API.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace BDWalks.API
 {
@@ -24,6 +27,9 @@ namespace BDWalks.API
             builder.Services.AddDbContext<BDWalksDbContext>(options => 
                 options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksConnectionString"))
             );
+            builder.Services.AddDbContext<BDWalksAuthDbContext>(options => 
+                options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksAuthConnectionString"))
+            );
 
             // injecting the repositories
             builder.Services.AddScoped<IRegionRepository, RegionRepository>();
@@ -31,6 +37,37 @@ namespace BDWalks.API
 
             // injecting automapper
             builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfiles>());
+
+            // configuring identity
+            builder.Services.AddIdentityCore<IdentityUser>()
+                .AddRoles<IdentityRole>()
+                .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("BDWalks")
+                .AddEntityFrameworkStores<BDWalksAuthDbContext>()
+                .AddDefaultTokenProviders();
+
+            // configuring identity options
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+            });
+
+            // configuring authentication
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer  = builder.Configuration["jwt:issuer"],
+                    ValidAudience = builder.Configuration["jwt:audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:key"]))
+                });
 
             var app = builder.Build();
 
@@ -42,6 +79,8 @@ namespace BDWalks.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -6,7 +6,7 @@ namespace BDWalks.API.Data
 {
     public class BDWalksDbContext : DbContext
     {
-        public BDWalksDbContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
+        public BDWalksDbContext(DbContextOptions<BDWalksDbContext> dbContextOptions) : base(dbContextOptions)
         {
 
         }
