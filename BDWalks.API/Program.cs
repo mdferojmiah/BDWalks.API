@@ -34,6 +34,7 @@ namespace BDWalks.API
             // injecting the repositories
             builder.Services.AddScoped<IRegionRepository, RegionRepository>();
             builder.Services.AddScoped<IWalkRepository, WalkRepository>();
+            builder.Services.AddScoped<ITokenRepository, TokenRepositoy>();
 
             // injecting automapper
             builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfiles>());

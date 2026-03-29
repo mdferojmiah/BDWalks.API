@@ -1,4 +1,5 @@
 ﻿using BDWalks.API.Models.DTOs;
+using BDWalks.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace BDWalks.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
+            this.tokenRepository = tokenRepository;
         }
         // POST: api/Auth/Register
         [HttpPost]
@@ -62,18 +65,28 @@ namespace BDWalks.API.Controllers
 
                 if (isValidPassword)
                 {
-                    // generate JWT token and return to the client
+                    // getting the roles
+                    var roles = await userManager.GetRolesAsync(user);
 
-                    return Ok("Login Successful!");
-                }else
-                {
-                    return BadRequest("Invalid Password!");
+                    if(roles != null && roles.Any())
+                    {
+                        // generate JWT token and return to the client
+                        var jwtToken = tokenRepository.CreateJWTToken(user, roles.ToList());
+
+                        // converting token to a response DTO
+                        var response = new LoginResponseDto
+                        {
+                            jwtToken = jwtToken,
+                        };
+
+                        //returning the response
+                        return Ok(response);
+                    }
+                    return BadRequest("User has no role!");
                 }
+                return BadRequest("Invalid Password!");
             }
-            else
-            {
-                return BadRequest("Invalid Username or Email!");
-            }
+            return BadRequest("Invalid Username or Email!");
         }
     }
 }

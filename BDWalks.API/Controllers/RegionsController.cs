@@ -13,7 +13,6 @@ namespace BDWalks.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository regionRepository;
@@ -27,6 +26,7 @@ namespace BDWalks.API.Controllers
 
         //GET: api/regions
         [HttpGet]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll()
         {
             // getting the region domain models from database
@@ -43,6 +43,7 @@ namespace BDWalks.API.Controllers
         // GET: api/regions/{id}
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             // getting the region domain model from database by id
@@ -65,6 +66,7 @@ namespace BDWalks.API.Controllers
         // POST: api/regions
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] CreateRegionDto createRegionDto)
         {
             //if (ModelState.IsValid == false)
@@ -90,6 +92,7 @@ namespace BDWalks.API.Controllers
         [HttpPut]
         [Route("{Id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateRegionDto updateRegionDto)
         {
             //if (ModelState.IsValid == false)
@@ -120,6 +123,7 @@ namespace BDWalks.API.Controllers
         // DELETE: api/regions/{id}
         [HttpDelete]
         [Route("{Id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Delete([FromRoute]Guid Id)
         {
             // deleting the region domain model from database by id
