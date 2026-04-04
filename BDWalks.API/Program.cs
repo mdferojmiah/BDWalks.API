@@ -6,6 +6,7 @@ using BDWalks.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -21,6 +22,8 @@ namespace BDWalks.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddHttpContextAccessor();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
@@ -52,6 +55,7 @@ namespace BDWalks.API
                     }
                 });
             });
+            
             // DbContext Configuration
             builder.Services.AddDbContext<BDWalksDbContext>(options => 
                 options.UseSqlServer(builder.Configuration.GetConnectionString("BDWalksConnectionString"))
@@ -64,6 +68,7 @@ namespace BDWalks.API
             builder.Services.AddScoped<IRegionRepository, RegionRepository>();
             builder.Services.AddScoped<IWalkRepository, WalkRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepositoy>();
+            builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
             // injecting automapper
             builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfiles>());
@@ -99,6 +104,17 @@ namespace BDWalks.API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:key"]))
                 });
 
+            // cors configuration
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -110,10 +126,17 @@ namespace BDWalks.API
 
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowAll");
+
             app.UseAuthentication();
 
             app.UseAuthorization();
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
+            });
 
             app.MapControllers();
 
